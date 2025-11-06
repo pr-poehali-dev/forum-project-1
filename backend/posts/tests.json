@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Create post without required fields",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "content": "Test post"
+      },
+      "expectedStatus": 400,
+      "bodyMatcher": "partial"
+    }
+  ]
+}

@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
+import AuthDialog from './AuthDialog';
+import { useState } from 'react';
 
 type User = {
   id: number;
@@ -15,14 +17,16 @@ type User = {
 };
 
 type ForumHeaderProps = {
-  currentUser: User;
+  currentUser: User | null;
   searchQuery: string;
   onSearchChange: (value: string) => void;
   onSearch: () => void;
   getRoleBadge: (role: string) => { text: string; className: string };
+  onAuthSuccess: (user: any, token: string) => void;
 };
 
-const ForumHeader = ({ currentUser, searchQuery, onSearchChange, onSearch, getRoleBadge }: ForumHeaderProps) => {
+const ForumHeader = ({ currentUser, searchQuery, onSearchChange, onSearch, getRoleBadge, onAuthSuccess }: ForumHeaderProps) => {
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
@@ -52,21 +56,22 @@ const ForumHeader = ({ currentUser, searchQuery, onSearchChange, onSearch, getRo
             </span>
           </Button>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <div className="flex items-center gap-2 cursor-pointer hover-scale">
-                <Avatar className="h-9 w-9 border-2 border-primary">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="gradient-purple-pink text-white text-sm font-semibold">
-                    {currentUser.name[0]}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="hidden md:block text-left">
-                  <p className="text-sm font-semibold">{currentUser.name}</p>
-                  <p className="text-xs text-muted-foreground">{currentUser.posts} постов</p>
+          {currentUser ? (
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className="flex items-center gap-2 cursor-pointer hover-scale">
+                  <Avatar className="h-9 w-9 border-2 border-primary">
+                    <AvatarImage src={currentUser.avatar} />
+                    <AvatarFallback className="gradient-purple-pink text-white text-sm font-semibold">
+                      {currentUser.name[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="hidden md:block text-left">
+                    <p className="text-sm font-semibold">{currentUser.name}</p>
+                    <p className="text-xs text-muted-foreground">{currentUser.posts} постов</p>
+                  </div>
                 </div>
-              </div>
-            </DialogTrigger>
+              </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Профиль пользователя</DialogTitle>
@@ -101,7 +106,19 @@ const ForumHeader = ({ currentUser, searchQuery, onSearchChange, onSearch, getRo
                 </Button>
               </div>
             </DialogContent>
-          </Dialog>
+            </Dialog>
+          ) : (
+            <Button onClick={() => setAuthDialogOpen(true)} className="gradient-purple-pink text-white">
+              <Icon name="LogIn" className="h-4 w-4 mr-2" />
+              Войти
+            </Button>
+          )}
+
+          <AuthDialog
+            open={authDialogOpen}
+            onOpenChange={setAuthDialogOpen}
+            onAuthSuccess={onAuthSuccess}
+          />
         </div>
       </div>
     </header>

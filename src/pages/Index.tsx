@@ -51,17 +51,22 @@ type Message = {
 };
 
 const Index = () => {
-  const [currentUser] = useState<User>({
-    id: 1,
-    name: 'Александр',
-    avatar: '',
-    role: 'admin',
-    posts: 342,
-    joinDate: '2024-01-15'
-  });
-
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState('forums');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const handleAuthSuccess = (user: any, token: string) => {
+    setCurrentUser({
+      id: user.id,
+      name: user.username,
+      avatar: user.avatar_url || '',
+      role: user.role,
+      posts: user.posts_count,
+      joinDate: user.created_at
+    });
+    localStorage.setItem('forum_token', token);
+    localStorage.setItem('forum_user', JSON.stringify(user));
+  };
 
   const forums: Forum[] = [
     {
@@ -189,6 +194,7 @@ const Index = () => {
         onSearchChange={setSearchQuery}
         onSearch={handleSearch}
         getRoleBadge={getRoleBadge}
+        onAuthSuccess={handleAuthSuccess}
       />
 
       <main className="container px-4 py-8">
@@ -218,11 +224,11 @@ const Index = () => {
           </TabsList>
 
           <TabsContent value="forums">
-            <ForumsTab forums={forums} onCreateTopic={handleCreateTopic} />
+            <ForumsTab currentUserId={currentUser?.id} />
           </TabsContent>
 
           <TabsContent value="topics">
-            <TopicsTab topics={topics} getRoleBadge={getRoleBadge} />
+            <TopicsTab currentUserId={currentUser?.id} getRoleBadge={getRoleBadge} />
           </TabsContent>
 
           <TabsContent value="messages">

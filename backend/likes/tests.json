@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Like without user_id",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "post_id": 1
+      },
+      "expectedStatus": 400,
+      "bodyMatcher": "partial"
+    }
+  ]
+}

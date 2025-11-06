@@ -1,0 +1,22 @@
+{
+  "tests": [
+    {
+      "name": "Get all forum categories",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Create new forum category",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "name": "Test Forum 2",
+        "description": "Test Description",
+        "icon": "MessageSquare",
+        "gradient": "gradient-purple-pink"
+      },
+      "expectedStatus": 201
+    }
+  ]
+}
